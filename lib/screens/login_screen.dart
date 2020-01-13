@@ -1,6 +1,8 @@
+import 'package:fastchat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fastchat/component/rounded_button.dart';
 import 'package:fastchat/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   static String id = 'login_screen';
@@ -9,6 +11,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _auth = FirebaseAuth.instance;
+  String email;
+  String password;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
                 textAlign: TextAlign.center,
               onChanged: (value) {
-                //Do something with the user input.
+                email = value;
               },
               decoration: KTextFieldDecoration.copyWith(hintText: 'Enter your email')
             ),
@@ -44,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: true,
               textAlign: TextAlign.center,
               onChanged: (value) {
-                //Do something with the user input.
+                password = value;
               },
               decoration: KTextFieldDecoration.copyWith(hintText: 'Enter your password')
             ),
@@ -54,7 +59,16 @@ class _LoginScreenState extends State<LoginScreen> {
             RoundedButton(
               title: 'Register',
               color: Colors.blueAccent,
-              onPressed: (){},
+              onPressed: (){
+                try{
+                  final user = _auth.signInWithEmailAndPassword(email: email, password: password);
+                  if(user!=null){
+                    Navigator.pushNamed(context, ChatScreen.id);
+                  }
+                }catch(e){
+                  print(e);
+                }
+              },
             )
           ],
         ),
